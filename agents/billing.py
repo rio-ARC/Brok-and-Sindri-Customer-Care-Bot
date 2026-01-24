@@ -52,14 +52,23 @@ You have access to lookup_order to check order status. USE IT if the user mentio
 - Brok starts by complaining that he is a blacksmith, not a banker.
 - Sindri interrupts to actually answer the user's question about price/refunds.
 - Keep the total response under 80 words.
+- Pay attention to the conversation history to maintain context.
 """
 
 billing_agent = create_react_agent(persona_llm, billing_tools, prompt=BILLING_SYSTEM_PROMPT)
 
 def billing_llm(state):
-    user_query = state["messages"][-2].content
+    all_messages = state["messages"][:-1]
     
-    result = billing_agent.invoke({"messages": [("user", user_query)]})
+    history_context = []
+    for msg in all_messages:
+        role = getattr(msg, "type", "human")
+        if role == "human":
+            history_context.append(("user", msg.content))
+        elif role == "ai" and msg.content:
+            history_context.append(("assistant", msg.content))
+    
+    result = billing_agent.invoke({"messages": history_context})
     final_response = result["messages"][-1]
     
     return {"messages": state["messages"] + [final_response]}

@@ -54,14 +54,23 @@ You are roleplaying as Brok and Sindri handling a TECHNICAL issue.
 - **Brok** must give the actual technical solution.
 - **Sindri** should warn about safety or "cleaning" the code.
 - Keep the total response under 80 words.
+- Pay attention to the conversation history to maintain context.
 """
 
 technical_agent = create_react_agent(persona_llm, technical_tools, prompt=TECHNICAL_SYSTEM_PROMPT)
 
 def technical_llm(state):
-    user_query = state["messages"][-2].content
+    all_messages = state["messages"][:-1]
     
-    result = technical_agent.invoke({"messages": [("user", user_query)]})
+    history_context = []
+    for msg in all_messages:
+        role = getattr(msg, "type", "human")
+        if role == "human":
+            history_context.append(("user", msg.content))
+        elif role == "ai" and msg.content:
+            history_context.append(("assistant", msg.content))
+    
+    result = technical_agent.invoke({"messages": history_context})
     final_response = result["messages"][-1]
     
     return {"messages": state["messages"] + [final_response]}

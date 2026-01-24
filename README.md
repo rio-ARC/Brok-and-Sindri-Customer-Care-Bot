@@ -8,4 +8,5 @@ I was inspired to build this while watching the gameplay of *God of War* and wan
 - **ReAct agents** for Billing and Technical nodes with tool execution
 - **Tools:** Order lookup, server diagnostics (psutil), web search (Tavily)
 - **FastAPI backend** with `/chat` endpoint
+- **User memory** with thread-based sessions (each user_id maintains separate conversation history)
 - **Dual-persona responses** — every reply features both Brok and Sindri interacting
