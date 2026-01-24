@@ -1,0 +1,11 @@
+langgraph
+langchain
+langchain-groq
+langchain-community
+langchain-tavily
+python-dotenv
+psutil
+
+uvicorn
+fastapi
+python-multipart
