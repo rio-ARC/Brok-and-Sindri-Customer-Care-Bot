@@ -1,8 +1,10 @@
 # Brok & Sindri Customer Care Bot
 
-I was inspired to build this while watching the gameplay of *God of War* and wanting to learn LangChain and LangGraph better. The dual-persona mechanic of Brok (rude, technical genius) and Sindri (anxious, polite) seemed perfect for a quirky customer support bot. **Next up:** Connecting the newly built React frontend to the FastAPI backend!
+I was inspired to build this while watching the gameplay of *God of War* and wanting to learn LangChain and LangGraph better. The dual-persona mechanic of Brok (rude, technical genius) and Sindri (anxious, polite) seemed perfect for a quirky customer support bot.
 
-**🔥 [TRY THE LIVE BOT HERE](https://brok-and-sindri-customer-care-bot.onrender.com/docs) (Swagger UI)**
+**🔥 [TRY THE LIVE BOT HERE (Backend)](https://brok-and-sindri-customer-care-bot.onrender.com/docs) (Swagger UI)**
+
+**🌐 [TRY THE LIVE BOT HERE (Frontend)](https://brok-and-sindri-customer-care-bot.vercel.app/)**
 
 ## What's Done
 
