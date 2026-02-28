@@ -34,7 +34,7 @@ export default function Home() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
@@ -47,19 +47,38 @@ export default function Home() {
     setMessages((prev) => [...prev, newUserMessage]);
     setInputValue("");
 
-    // --- Backend Integration Hook ---
-    // Here is where you will call your FastAPI backend:
-    // fetch('http://localhost:10000/chat', { ... })
-
-    // For now, mock a bot response after a short delay
-    setTimeout(() => {
-      const mockBotMessage: Message = {
+    // Add a temporary loading message
+    setMessages((prev) => [
+      ...prev,
+      {
         id: (Date.now() + 1).toString(),
         sender: "bot",
-        text: "**Brok:** I'm workin' on it, keep your beard on!\n\n**Sindri:** We are processing your request, please holding...",
-      };
-      setMessages((prev) => [...prev, mockBotMessage]);
-    }, 1000);
+        text: "Brok is firing up the forge...",
+      },
+    ]);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newUserMessage.text }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch response from the server.");
+      }
+
+      const data = await response.json();
+      setMessages((prev) => [
+        ...prev.slice(0, -1), // Remove the loading message
+        { id: Date.now().toString(), sender: "bot", text: data.reply || "No response from the forge." },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev.slice(0, -1), // Remove the loading message
+        { id: Date.now().toString(), sender: "bot", text: "The forge connection was lost. Try again." },
+      ]);
+    }
   };
 
   // Helper function to render text with bold line breaks
@@ -100,7 +119,7 @@ export default function Home() {
 
       {/* --- LAYER 1: CHARACTERS --- */}
       {/* Brok (Left) */}
-      <div className="absolute bottom-0 left-0 z-10 hidden md:block w-1/3 max-w-[450px] aspect-[3/4]">
+      <div className="absolute bottom-0 left-0 z-10 hidden md:block w-1/3 max-w-112.5 aspect-3/4">
         <Image
           src="/images/Brok_Render.png"
           alt="Brok"
@@ -111,7 +130,7 @@ export default function Home() {
       </div>
 
       {/* Sindri (Right) */}
-      <div className="absolute bottom-0 right-0 z-10 hidden md:block w-1/3 max-w-[450px] aspect-[3/4]">
+      <div className="absolute bottom-0 right-0 z-10 hidden md:block w-1/3 max-w-112.5 aspect-3/4">
         <Image
           src="/images/Sindri_profile.png"
           alt="Sindri"
@@ -129,7 +148,7 @@ export default function Home() {
 
           {/* Header */}
           <div className="bg-[#2a1708]/90 border-b border-amber-900/60 px-6 py-4 flex items-center shadow-md">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-linear-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
               Huldra Brothers Workshop
             </h1>
           </div>
